@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="./app.component.scss">
+</head>
+<body>
+  <!-- Your component's content here -->
+  <nav class="navbar">
+    <a routerLink="/home" routerLinkActive="active">Home</a>
+    <a routerLink="/erc-20" routerLinkActive="active">Token</a>
+    <a routerLink="/lottery" routerLinkActive="active">Lottery</a>
+  </nav>
+
+  <router-outlet></router-outlet>
+
+  <div class="h-screen bg-gradient-to-b from-green-100 to-brand-turquoise">
+    <div class="p-4">
+      <div class="flex items-center justify-between gap-6">
+        <img src="../assets/venture-miner-logo.png" class="w-32 bg-wite" />
+        <div class="flex flex-row items-center gap-4 text-sm">
+          <span
+            class="p-4 font-bold text-white rounded bg-brand-turquoise"
+            *ngIf="currentChainId$ | async"
+            >network id {{ currentChainId$ | async }}</span
+          >
+          <span
+            class="p-4 font-bold text-white break-all rounded bg-brand-turquoise"
+            *ngIf="currentAccount$ | async"
+            >{{ currentAccount$ | async }}</span
+          >
+          <span
+            class="p-4 font-bold text-white break-all rounded bg-brand-turquoise"
+            *ngIf="balance$ | async"
+            >{{ balance$ | async }}</span
+          >
+          <span
+            class="p-4 font-bold text-white break-all rounded cursor-pointer bg-brand-turquoise"
+            *ngIf="hasMetamask && !(currentAccount$ | async)"
+            (click)="connectWallet()"
+            >CONNECT WALLET</span
+          >
+          <span
+            class="p-4 font-bold text-white rounded bg-brand-yellow"
+            *ngIf="!hasMetamask"
+            >PLEASE INSTALL METAMASK</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</body>
+</html>
