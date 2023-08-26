@@ -1,16 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { ethers } from 'ethers';
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class MetamaskService {
-  
-  currentChainId$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  currentAccount$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  balance$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  currentChainId = signal('');
+  currentAccount = signal('');
+  balance = signal('');
   provider: ethers.providers.Web3Provider | undefined;
   signer: ethers.Signer | undefined;
 
@@ -44,15 +41,15 @@ export class MetamaskService {
   }
 
   handleChainChanged(): void {
-    console.log({log: window.ethereum})
-    this.currentChainId$.next(window.ethereum.chainId);
+    console.log({ log: window.ethereum });
+    this.currentChainId.set(window.ethereum.chainId);
     window.ethereum.on('chainChanged', () => {
       window.location.reload();
     });
   }
 
   handleAccountsChanged() {
-    this.currentAccount$.next(window.ethereum.selectedAddress);
+    this.currentAccount.set(window.ethereum.selectedAddress);
     this.provider = this.getProvider();
     this.signer = this.provider.getSigner();
     window.ethereum.on('accountsChanged', () => {
@@ -61,9 +58,9 @@ export class MetamaskService {
   }
 
   async getBalance() {
-    if (!this.provider) throw new Error("Provider not configured!");
-    const balance = await this.provider.getBalance(this.currentAccount$.value);
-    this.balance$.next(ethers.utils.formatEther(balance));
+    if (!this.provider) throw new Error('Provider not configured!');
+    const balance = await this.provider.getBalance(this.currentAccount());
+    this.balance.set(ethers.utils.formatEther(balance));
   }
 
   getProvider() {
