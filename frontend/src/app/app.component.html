@@ -59,8 +59,23 @@
         <div *ngIf="hasMetamask && currentAccount()">
 
           <div class="text-center p-3">
+
             <div class="bg-white p-8 rounded-lg text-center">
               <span class="font-bold">{{ countdown }} </span>
+            </div>
+
+            <br>
+
+            <div class="bg-white p-8 rounded-lg text-center">
+              <span class="font-bold">Prize Pool</span><br>
+              {{ prizePool }}
+            </div>
+
+            <br>
+
+            <div class="bg-white p-8 rounded-lg text-center">
+              <span class="font-bold">Token Balance</span><br>
+              {{ tokenBalance }}
             </div>
 
             <br>
@@ -78,24 +93,25 @@
               </div>
             </div>
           </div>
-
-          <div>
-            <br>
-            <span class="font-bold">Prize Pool:</span> {{ prizePool }}
-          </div>
         
           <div *ngIf="owner == currentAccount()">
+            <br>
             <input #inputRef placeholder="Set Bets Closing Time..">
-            <button class="bg-red-100 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" (click)="openBets(inputRef.value)">Open Bets</button>
+            <br>
+            <button class="bg-red-100 hover:bg-red-700 text-white font-bold py-2 p-4 px-6 rounded w-full" (click)="openBets(inputRef.value)">Open Bets</button>
+          </div>
+
+        
+          <div>
+            <br>
+            <button class="bg-red-700 hover:bg-red-700 text-white font-bold py-2 p-4 px-6 rounded w-full" (click)="bet()">Bet</button>
           </div>
         
           <div>
-            <button class="bg-red-700 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" (click)="bet()">Bet</button>
-          </div>
-        
-          <div>
-            <input #inputRef placeholder="ETH amount...">
-            <button class="bg-red-700 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" (click)="purchaseTokens(inputRef.value)">Buy Tokens</button>
+            <br>
+            <input class="w-full p-4" #inputRef placeholder="ETH amount...">
+            <br>
+            <button class="bg-red-700 hover:bg-red-700 text-white font-bold py-2 p-4 px-6 rounded w-full" (click)="purchaseTokens(inputRef.value)">Buy Tokens</button>
           </div>
 
         </div>
