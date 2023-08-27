@@ -30,10 +30,13 @@ export class AppComponent {
   message = new FormControl('', Validators.required);
   signatures: string[] = [];
   contract = Lottery__factory.connect("0xBe5Cc7a963c8a1A9D581c2EffB2795f945564303", this.signer);
+
   contractName = ""
+  owner = ""
   betPrice = BigNumber.from(0)
   betFee = BigNumber.from(0)
   prizePool = BigNumber.from(0)
+  numBetsMade = Number(0)
   countdown = "Bets are open"
   targetTimestamp = BigNumber.from(0)
 
@@ -52,6 +55,7 @@ export class AppComponent {
         );
       }
     });
+    effect(async () => { this.owner = await this.contract.owner()});
 
     effect(async () => {
       const currentTimestamp = Date.now();
@@ -125,17 +129,26 @@ export class AppComponent {
     }
   }
 
+  // open bets -> pass the closing timestamp
+  async openBets(betsClosingTime: string) {
+    try {
+      const tx = await this.contract.openBets(Number(betsClosingTime));
+      await tx.wait();
+      return tx.hash; 
+    }
+    catch{
+      alert("Error occured during the transaction! Confirm input")
+      return "Error"
+    }
+  }
+
   // bet
   async bet() {
     try {
-      if (window.ethereum) {
-        const contractConnected = this.contract.connect(this.signer);
-        const tx = await contractConnected.bet();
-        await tx.wait();
-        alert(tx.hash);
-        return tx.hash;
-      }
-      else {return "Metamask is not detected"}
+      const tx = await this.contract.bet();
+      await tx.wait();
+      this.numBetsMade += 1;
+      return tx.hash;
     }
 
     catch{
@@ -147,20 +160,12 @@ export class AppComponent {
   // Buy tokens
   async purchaseTokens(ethValue: string) {
     try {
-      if (window.ethereum) {
-        const amountToSend = ethers.utils.parseEther(ethValue);
-        alert(amountToSend)
-        const tx = await this.contract.connect(this.signer).purchaseTokens({value: amountToSend});
-        await tx.wait();
-        alert(tx.hash);
-        return tx.hash;
-      }
-      else {return "Metamask is not detected"}
+      const tx = await this.contract.purchaseTokens({value: ethers.utils.parseEther(ethValue)});
+      return tx.hash;
     }
-
     catch{
       alert("Error occured during the transaction!")
-      return "Error"
+      return "Error. Make sure you have enough tokens"
     }
   }
 

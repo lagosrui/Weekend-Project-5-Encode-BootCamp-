@@ -1,31 +1,22 @@
 <div>
   <div class="p-4">
     <div class="flex items-center justify-between gap-6">
-      <img src="../assets/venture-miner-logo.png" class="w-32 bg-wite" />
+      <img src="../assets/images/luck.jpg" class="w-32 bg-wite" />
       <div class="flex flex-row items-center gap-4 text-sm">
-        <span>
-          <a href="erc-20">ERC20</a>
-        </span>
         <span
-          class="p-4 font-bold text-white rounded bg-brand-turquoise"
+          class="p-4 font-bold text-white rounded bg-red-700"
           *ngIf="currentChainId()"
           >Network ID {{ currentChainId() }}</span
         >
         <span
-          class="p-4 font-bold text-white break-all rounded bg-brand-turquoise"
+          class="p-4 font-bold text-white break-all rounded bg-red-700"
           *ngIf="currentAccount()"
           >{{ currentAccount() }}</span
         >
         <span
-          class="p-4 font-bold text-white break-all rounded bg-brand-turquoise"
+          class="p-4 font-bold text-white break-all rounded bg-red-700"
           *ngIf="balance()"
           >{{ balance() }}</span
-        >
-        <span
-          class="p-4 font-bold text-white break-all rounded cursor-pointer bg-brand-turquoise"
-          *ngIf="hasMetamask && !currentAccount()"
-          (click)="connectWallet()"
-          >CONNECT WALLET</span
         >
         <span
           class="p-4 font-bold text-white rounded bg-brand-yellow"
@@ -35,10 +26,10 @@
       </div>
     </div>
     <table
-      class="text-brand-turquoise font-bold rounded bg-white break-all mt-10 w-full"
+      class="text-red-700 font-bold rounded bg-white break-all mt-10 w-full"
       *ngIf="tokenBalances.length"
     >
-      <thead class="bg-brand-turquoise bg-opacity-10">
+      <thead class="bg-red-700 bg-opacity-10">
         <tr>
           <th class="px-6 py-4">Contract Address</th>
           <th class="px-6 py-4">Token Balance</th>
@@ -60,22 +51,65 @@
   </div>
 </div>
 
-<div>
-  <span class="font-bold">Bet Price:</span> {{ betPrice }}
-  <br>
-  <span class="font-bold">Bet Fee:</span> {{ betFee }}
-  <br>
-  <span class="font-bold">Prize Pool:</span> {{ prizePool }}
-  <br>
-  <span class="font-bold">Countdown:</span> {{ countdown }}
-  <br>
-  <span class="font-bold">Final timestamp:</span> {{ targetTimestamp }}
-</div>
-<div>
-  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="bet()">Bet</button>
-</div>
+<div class="bg-image">
+  <div>
+    <div class="flex justify-center items-center min-h-screen 30-w-screen">
+      <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-lg bg-gray-200 p-8">
 
-<div>
-  <input #inputRef placeholder="ETH amount...">
-  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="purchaseTokens(inputRef.value)">Buy Tokens</button>
+        <div *ngIf="hasMetamask && currentAccount()">
+
+          <div class="text-center p-3">
+            <div class="bg-white p-8 rounded-lg text-center">
+              <span class="font-bold">{{ countdown }} </span>
+            </div>
+
+            <br>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-white p-4 rounded-lg">
+                <span class="font-bold">Bet Price</span>
+                <br>
+                {{ betPrice }}
+              </div>
+              <div class="bg-white p-4 rounded-lg">
+                <span class="font-bold">Bet Fee</span>
+                <br>
+                {{ betFee }}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <br>
+            <span class="font-bold">Prize Pool:</span> {{ prizePool }}
+          </div>
+        
+          <div *ngIf="owner == currentAccount()">
+            <input #inputRef placeholder="Set Bets Closing Time..">
+            <button class="bg-red-100 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" (click)="openBets(inputRef.value)">Open Bets</button>
+          </div>
+        
+          <div>
+            <button class="bg-red-700 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" (click)="bet()">Bet</button>
+          </div>
+        
+          <div>
+            <input #inputRef placeholder="ETH amount...">
+            <button class="bg-red-700 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" (click)="purchaseTokens(inputRef.value)">Buy Tokens</button>
+          </div>
+
+        </div>
+
+        <div *ngIf="hasMetamask && !currentAccount()" class="p-10">
+          <span
+          class="p-4 font-bold text-white break-all rounded cursor-pointer bg-red-700"
+          *ngIf="hasMetamask && !currentAccount()"
+          (click)="connectWallet()"
+          >CONNECT WALLET</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div>
+  

@@ -3,12 +3,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { Erc20Component } from './erc20/erc20.component';
 
 @NgModule({
-  declarations: [AppComponent, Erc20Component],
+  declarations: [AppComponent],
   imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule],
   providers: [],
-  bootstrap: [AppComponent, Erc20Component],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}
