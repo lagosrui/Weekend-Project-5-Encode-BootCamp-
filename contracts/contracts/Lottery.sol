@@ -83,7 +83,7 @@ contract Lottery is Ownable {
     }
 
     /// @notice Charges the bet price and creates a new bet slot with the sender's address
-    function bet() public whenBetsOpen {
+    function bet() public whenBetsOpen {    
         ownerPool += betFee;
         prizePool += betPrice;
         _slots.push(msg.sender);
@@ -117,7 +117,7 @@ contract Lottery is Ownable {
     /// @notice Returns a random number calculated from the previous block randao
     /// @dev This only works after The Merge
     function getRandomNumber() public view returns (uint256 randomNumber) {
-        randomNumber = block.difficulty;
+        randomNumber = block.prevrandao;
     }
 
     /// @notice Withdraws `amount` from that accounts's prize pool

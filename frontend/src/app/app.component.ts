@@ -3,8 +3,8 @@ import { MetamaskService } from './services/metamask.service';
 import { AlchemyService } from './services/alchemy.service';
 import { TokenBalance } from 'alchemy-sdk';
 import { FormControl, Validators } from '@angular/forms';
-import { ethers, Contract } from 'ethers';
-import { LotteryToken__factory } from 'src/assets/contracts';
+import { BigNumber, ethers } from 'ethers';
+import { Lottery__factory } from 'src/assets/contracts';
 
 declare global {
   interface Window {
@@ -29,14 +29,18 @@ export class AppComponent {
   tokenBalances: TokenBalance[] = [];
   message = new FormControl('', Validators.required);
   signatures: string[] = [];
-  contract = LotteryToken__factory.connect("0x47F57A286Db67a420e83474E7daE22BCdd84eDB6", this.signer);
+  contract = Lottery__factory.connect("0xBe5Cc7a963c8a1A9D581c2EffB2795f945564303", this.signer);
+  contractName = ""
+  betPrice = BigNumber.from(0)
+  betFee = BigNumber.from(0)
+  prizePool = BigNumber.from(0)
+  countdown = "Bets are open"
+  targetTimestamp = BigNumber.from(0)
 
   constructor(
     private metamaskService: MetamaskService,
     private alchemyService: AlchemyService
   ) {
-    console.log(this.signer)
-    console.log(this.contract)
     this.hasMetamask = metamaskService.checkMetamaskAvailability();
     if (this.hasMetamask) {
       metamaskService.retrieveConnection();
@@ -49,19 +53,23 @@ export class AppComponent {
       }
     });
 
-    console.log(this.provider)
-    console.log(this.signer)
-    console.log(this.contract)
-    console.log(this.contract.name())
+    effect(async () => {
+      const currentTimestamp = Date.now();
+      const oneHourInMilliseconds = 1 * 10 * 1000; // 1 hour = 60 minutes * 60 seconds * 1000 milliseconds
+      this.targetTimestamp = BigNumber.from(currentTimestamp + oneHourInMilliseconds);
+      // this.targetTimestamp = await this.contract.betsClosingTime()
+    });
+  }
 
+  ngOnInit() {
+    this.updateCountdown();
+    setInterval(() => this.updateCountdown(), 1000);
+    this.updateBetPrice(); 
+    this.updateBetFee(); 
   }
 
   connectWallet() {
     this.metamaskService.connectWallet();
-  }
-
-  getName() {
-    return this.contract.name()
   }
 
   signMessage() {
@@ -69,6 +77,91 @@ export class AppComponent {
     this.metamaskService.signer?.signMessage(message).then((signature) => {
       this.signatures.push(signature);
     });
+  }
+
+  // get betPrice or error
+  async updateBetPrice() {
+    try {
+      this.betPrice = await this.contract.betPrice();
+    } catch (error) {
+      console.error('Error fetching bet price:', error);
+      this.betPrice = ethers.BigNumber.from(0);
+    }
+  }
+
+  // get betFee or error
+  async updateBetFee() {
+    try {
+      this.betFee = await this.contract.betFee();
+    } catch (error) {
+      console.error('Error fetching bet price:', error);
+      this.betFee = ethers.BigNumber.from(0);
+    }
+  }
+
+  // get prizePool or error
+  async getPrizePool() {
+    try {
+      this.prizePool = await this.contract.prizePool();
+    } catch (error) {
+      console.error('Error fetching bet price:', error);
+      this.prizePool = ethers.BigNumber.from(0);
+    }
+  }
+
+  // Countdown to bets closed
+  updateCountdown() {
+    const currentTime = Date.now();
+    const timeDifference = Number(this.targetTimestamp) - currentTime;
+
+    if (timeDifference <= 0) {
+      this.countdown = 'Bets are closed';
+      
+    } else {
+      const hours = Math.floor(timeDifference / 3600000);
+      const minutes = Math.floor((timeDifference % 3600000) / 60000);
+      const seconds = Math.floor((timeDifference % 60000) / 1000);
+      this.countdown = `${hours}h ${minutes}m ${seconds}s`;
+    }
+  }
+
+  // bet
+  async bet() {
+    try {
+      if (window.ethereum) {
+        const contractConnected = this.contract.connect(this.signer);
+        const tx = await contractConnected.bet();
+        await tx.wait();
+        alert(tx.hash);
+        return tx.hash;
+      }
+      else {return "Metamask is not detected"}
+    }
+
+    catch{
+      alert("Error occured during the transaction!")
+      return "Error"
+    }
+  }
+
+  // Buy tokens
+  async purchaseTokens(ethValue: string) {
+    try {
+      if (window.ethereum) {
+        const amountToSend = ethers.utils.parseEther(ethValue);
+        alert(amountToSend)
+        const tx = await this.contract.connect(this.signer).purchaseTokens({value: amountToSend});
+        await tx.wait();
+        alert(tx.hash);
+        return tx.hash;
+      }
+      else {return "Metamask is not detected"}
+    }
+
+    catch{
+      alert("Error occured during the transaction!")
+      return "Error"
+    }
   }
 
 }

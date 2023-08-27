@@ -60,6 +60,22 @@
   </div>
 </div>
 
-{{signer}}
-{{contract}}
-{{provider}}
+<div>
+  <span class="font-bold">Bet Price:</span> {{ betPrice }}
+  <br>
+  <span class="font-bold">Bet Fee:</span> {{ betFee }}
+  <br>
+  <span class="font-bold">Prize Pool:</span> {{ prizePool }}
+  <br>
+  <span class="font-bold">Countdown:</span> {{ countdown }}
+  <br>
+  <span class="font-bold">Final timestamp:</span> {{ targetTimestamp }}
+</div>
+<div>
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="bet()">Bet</button>
+</div>
+
+<div>
+  <input #inputRef placeholder="ETH amount...">
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="purchaseTokens(inputRef.value)">Buy Tokens</button>
+</div>

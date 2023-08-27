@@ -9,6 +9,6 @@ import { Erc20Component } from './erc20/erc20.component';
   declarations: [AppComponent, Erc20Component],
   imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule],
   providers: [],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent, Erc20Component],
 })
 export class AppModule {}
