@@ -96,15 +96,27 @@
         
           <div *ngIf="owner == currentAccount()">
             <br>
-            <input #inputRef placeholder="Set Bets Closing Time..">
+            <input class="w-full"  #inputRef1 placeholder="Set Bets Closing Time..">
             <br>
-            <button class="bg-red-100 hover:bg-red-700 text-white font-bold py-2 p-4 px-6 rounded w-full" (click)="openBets(inputRef.value)">Open Bets</button>
+            <button class="bg-red-100 hover:bg-red-700 text-white font-bold py-2 p-4 px-6 rounded w-full" (click)="openBets(inputRef1.value)">Open Bets</button>
           </div>
 
         
-          <div>
+          <div *ngIf="betsOpen">
             <br>
             <button class="bg-red-700 hover:bg-red-700 text-white font-bold py-2 p-4 px-6 rounded w-full" (click)="bet()">Bet</button>
+          </div>
+
+          <div *ngIf="!betsOpen">
+            <br>
+            <input class="w-full p-4" #inputRef2 type="number" placeholder="withdraw value">
+            <br>
+            <button class="bg-red-700 hover:bg-red-700 text-white font-bold py-2 p-4 px-6 rounded w-full" (click)="withdraw(inputRef2.value)">Withdraw</button>
+          </div>
+
+          <div *ngIf="betsOpen">
+            <br>
+            <button class="bg-blue-700 hover:bg-orange-700 text-white font-bold py-2 p-4 px-6 rounded w-full" (click)="closeBets()">close bet</button>
           </div>
         
           <div>

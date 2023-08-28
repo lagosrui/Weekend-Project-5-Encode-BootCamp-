@@ -19,7 +19,7 @@ declare global {
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-
+  betsOpen = false;
   provider = new ethers.providers.Web3Provider(window.ethereum, "any");  /// ver na nova versão
   signer = this.provider.getSigner();
   title = 'Weekend Project 5 - Encode';
@@ -32,7 +32,7 @@ export class AppComponent {
   signatures: string[] = [];
   contract = Lottery__factory.connect("0x4cDe64bF06fC14C1B86e8972ec47c520b868102f", this.signer);
   token = LotteryToken__factory.connect("0x4D70bE1ba2758FA287AEe20Ac5A7857c1aFEF8AD", this.signer);
-  tokenBalance = BigNumber.from(10);
+  tokenBalance = BigNumber.from(0);
 
   contractName = ""
   owner = ""
@@ -52,6 +52,9 @@ export class AppComponent {
       metamaskService.retrieveConnection();
     }
     effect(async () => {
+      this.betsOpen = await this.contract.betsOpen();
+    });
+    effect(async () => {
       if (this.currentAccount()) {
         this.tokenBalances = await this.alchemyService.getTokenBalances(
           this.currentAccount()
@@ -70,6 +73,8 @@ export class AppComponent {
     effect(async () => {
       this.tokenBalance = await this.token.balanceOf(String(this.currentAccount()));
     });
+
+    
 
   }
 
@@ -121,6 +126,8 @@ export class AppComponent {
     }
   }
 
+  
+
   updateCountdown() {
     const currentTime = Date.now();
     const timeDifference = Math.floor(Number(this.targetTimestamp) - Number(currentTime) / 1000);
@@ -163,6 +170,36 @@ export class AppComponent {
     }
   }
 
+   // bet
+   async closeBets() {
+    try {
+      const tx = await this.contract.closeLottery();
+      await tx.wait();
+      this.numBetsMade += 1;
+      return tx.hash;
+    }
+
+    catch{
+      alert("Error occured during the transaction!")
+      return "Error"
+    }
+  }
+
+    // bet
+    async withdraw(amount: string) {
+      try {
+        const number1 = parseFloat(amount)
+        const tx = await this.contract.prizeWithdraw(number1);
+        await tx.wait();
+        this.numBetsMade += 1;
+        return tx.hash;
+      }
+  
+      catch{
+        alert("Error occured during the transaction!")
+        return "Error"
+      }
+    }
   // Buy tokens
   async purchaseTokens(ethValue: string) {
     try {
